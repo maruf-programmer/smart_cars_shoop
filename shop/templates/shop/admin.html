@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium CarShop - Admin Panel</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --secondary: #9333ea;
+            --accent: #059669;
+            --danger: #ef4444;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Glassmorphism utility */
+        .glass {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: #ffffff;
+            border-right: 1px solid var(--card-border);
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 100;
+        }
+
+        .sidebar-brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 2.5rem;
+            text-decoration: none;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex-grow: 1;
+        }
+
+        .menu-item a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 0.85rem 1rem;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .menu-item a:hover, .menu-item.active a {
+            background: #f1f5f9;
+            color: var(--primary);
+        }
+
+        .menu-item.active a {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+        }
+
+        /* Main Content Container */
+        .main-content {
+            margin-left: 260px;
+            flex-grow: 1;
+            padding: 2.5rem;
+            max-width: 1300px;
+            width: calc(100% - 260px);
+        }
+
+        /* Header */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 1.5rem;
+        }
+
+        .admin-title h1 {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .admin-title p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .client-site-btn {
+            background: #f1f5f9;
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 0.65rem 1.25rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .client-site-btn:hover {
+            background: #e2e8f0;
+            border-color: var(--text-muted);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            padding: 1.5rem;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-icon.blue { background: rgba(79, 70, 229, 0.1); color: var(--primary); }
+        .stat-icon.purple { background: rgba(147, 51, 234, 0.1); color: var(--secondary); }
+        .stat-icon.green { background: rgba(5, 150, 105, 0.1); color: var(--accent); }
+        .stat-icon.red { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-val {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            margin-bottom: 0.2rem;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Dashboard Views */
+        .dashboard-view {
+            display: none;
+        }
+
+        .dashboard-view.active {
+            display: block;
+        }
+
+        /* Cards/Tables */
+        .content-card {
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+        }
+
+        .content-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .content-card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            outline: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.75rem;
+            border-radius: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            filter: brightness(1.1);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .btn-danger:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-success {
+            background: rgba(5, 150, 105, 0.1);
+            color: var(--accent);
+            border: 1px solid rgba(5, 150, 105, 0.2);
+        }
+
+        .btn-success:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: var(--text-main);
+            border: 1px solid var(--card-border);
+        }
+
+        .btn-secondary:hover {
+            background: #f8fafc;
+        }
+
+        /* Table */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            padding: 1rem;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .badge-pending { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.2); }
+        .badge-approved { background: rgba(79, 70, 229, 0.15); color: #4f46e5; border: 1px solid rgba(79, 70, 229, 0.2); }
+        .badge-completed { background: rgba(16, 185, 129, 0.15); color: #059669; border: 1px solid rgba(16, 185, 129, 0.2); }
+        .badge-cancelled { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+
+        .badge-cash { background: rgba(5, 150, 105, 0.1); color: #059669; }
+        .badge-credit { background: rgba(147, 51, 234, 0.1); color: #9333ea; }
+
+        /* Modal styling */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.3);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition);
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-container {
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            border-radius: 24px;
+            padding: 2rem;
+            position: relative;
+            transform: scale(0.95);
+            transition: var(--transition);
+            overflow-y: auto;
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+        }
+
+        .modal.active .modal-container {
+            transform: scale(1);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #f1f5f9;
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-modal:hover {
+            color: var(--danger);
+            background: #e2e8f0;
+        }
+
+        /* Form Inputs */
+        .form-group {
+            margin-bottom: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .form-input {
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            outline: none;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+        }
+
+        /* Custom Mini Cards for Car Inventory Items */
+        .inv-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .inv-card {
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+        }
+
+        .inv-card-img {
+            height: 150px;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .inv-card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .inv-card-body {
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .inv-card-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .inv-card-price {
+            color: var(--secondary);
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+
+        .inv-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <a href="/" class="sidebar-brand">
+            <i class="fa-solid fa-car-side"></i> CarShop Panel
+        </a>
+        <ul class="sidebar-menu">
+            <li class="menu-item active" id="menuStats"><a href="#" onclick="switchView('statsView', 'menuStats')"><i class="fa-solid fa-chart-pie"></i> Statistika</a></li>
+            <li class="menu-item" id="menuInventory"><a href="#" onclick="switchView('inventoryView', 'menuInventory')"><i class="fa-solid fa-boxes-stacked"></i> Avtomobillar</a></li>
+            <li class="menu-item" id="menuOrders"><a href="#" onclick="switchView('ordersView', 'menuOrders')"><i class="fa-solid fa-receipt"></i> Sotuv Logi</a></li>
+            <li class="menu-item" id="menuBookings"><a href="#" onclick="switchView('bookingsView', 'menuBookings')"><i class="fa-solid fa-calendar-days"></i> Test Drivelar</a></li>
+        </ul>
+        <div style="margin-top: auto;">
+            <a href="/" class="client-site-btn" style="width: 100%; display: block; text-align: center;"><i class="fa-solid fa-globe"></i> Saytga o'tish</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="admin-header">
+            <div class="admin-title">
+                <h1 id="viewHeaderTitle">Boshqaruv va Statistika</h1>
+                <p id="viewHeaderSubtitle">Avtosalon faoliyatining umumiy ko'rsatkichlari</p>
+            </div>
+            <button class="btn btn-primary" onclick="openAddCarModal()"><i class="fa-solid fa-plus"></i> Yangi Avtomobil</button>
+        </div>
+
+        <!-- Dashboard Stats view -->
+        <div id="statsView" class="dashboard-view active">
+            <!-- Stats Row -->
+            <div class="stats-grid">
+                <div class="stat-card glass">
+                    <div class="stat-icon blue"><i class="fa-solid fa-dollar-sign"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-val" id="statSalesRevenue">$0.00</div>
+                        <div class="stat-label">Umumiy Tushum</div>
+                    </div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-icon purple"><i class="fa-solid fa-bag-shopping"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-val" id="statOrdersCount">0</div>
+                        <div class="stat-label">Sotilgan Mashinalar</div>
+                    </div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-icon green"><i class="fa-solid fa-handshake"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-val" id="statCreditCount">0</div>
+                        <div class="stat-label">Kredit Shartnomalar</div>
+                    </div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-icon red"><i class="fa-solid fa-calendar-check"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-val" id="statBookingsCount">0</div>
+                        <div class="stat-label">Test-Drive Bronlar</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Orders Table -->
+            <div class="content-card glass">
+                <div class="content-card-header">
+                    <h3 class="content-card-title">Oxirgi Xaridlar</h3>
+                    <button class="btn btn-secondary btn-sm" onclick="switchView('ordersView', 'menuOrders')">Barchasini Ko'rish</button>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Buyurtmachi</th>
+                                <th>Avtomobil</th>
+                                <th>To'lov Turi</th>
+                                <th>Kredit (Oy)</th>
+                                <th>Jami Narx</th>
+                                <th>Sana</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentOrdersBody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Recent Bookings Table -->
+            <div class="content-card glass">
+                <div class="content-card-header">
+                    <h3 class="content-card-title">Yaqin Oradagi Test Drivelar</h3>
+                    <button class="btn btn-secondary btn-sm" onclick="switchView('bookingsView', 'menuBookings')">Barchasini Ko'rish</button>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Mijoz</th>
+                                <th>Avtomobil</th>
+                                <th>Sana</th>
+                                <th>Soat Oralig'i</th>
+                                <th>Holat</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentBookingsBody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory View -->
+        <div id="inventoryView" class="dashboard-view">
+            <div class="inv-grid" id="inventoryGrid">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+
+        <!-- Orders View -->
+        <div id="ordersView" class="dashboard-view">
+            <div class="content-card glass" style="padding: 1.5rem;">
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Buyurtma ID</th>
+                                <th>Mijoz ismi</th>
+                                <th>Mijoz tel/email</th>
+                                <th>To'lov turi</th>
+                                <th>Kredit (oy / foiz)</th>
+                                <th>Jami narx</th>
+                                <th>Oylik to'lov</th>
+                                <th>Xarid vaqti</th>
+                            </tr>
+                        </thead>
+                        <tbody id="allOrdersBody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bookings View -->
+        <div id="bookingsView" class="dashboard-view">
+            <div class="content-card glass" style="padding: 1.5rem;">
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Bron ID</th>
+                                <th>Mijoz ismi</th>
+                                <th>Telefon raqam</th>
+                                <th>Avtomobil</th>
+                                <th>Sana</th>
+                                <th>Vaqt</th>
+                                <th>Holati</th>
+                                <th>Amallar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="allBookingsBody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Car Modal -->
+    <div class="modal" id="carModal">
+        <div class="modal-container glass">
+            <button class="close-modal" onclick="closeCarModal()"><i class="fa-solid fa-xmark"></i></button>
+            <h3 id="carModalTitle" style="margin-bottom: 1.5rem; font-size: 1.4rem;">Yangi Avtomobil Qo'shish</h3>
+            
+            <form id="carForm" onsubmit="submitCarForm(event)">
+                <input type="hidden" id="carIdInput">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="carBrand">Brend</label>
+                        <input type="text" id="carBrand" class="form-input" placeholder="Chevrolet, Tesla, etc." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="carModel">Model</label>
+                        <input type="text" id="carModel" class="form-input" placeholder="Malibu, Model Y, etc." required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="carYear">Yili</label>
+                        <input type="number" id="carYear" class="form-input" placeholder="2023" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="carPrice">Narxi ($)</label>
+                        <input type="number" id="carPrice" class="form-input" placeholder="30000" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="carColor">Rangi</label>
+                        <input type="text" id="carColor" class="form-input" placeholder="Oq, Qora, Grey, etc." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="carMileage">Yurgan masofasi (km)</label>
+                        <input type="number" id="carMileage" class="form-input" placeholder="0" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="carEngine">Dvigatel</label>
+                        <input type="text" id="carEngine" class="form-input" placeholder="2.0L Turbo, Electric, etc." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="carTransmission">Uzatmalar qutisi (Transmission)</label>
+                        <select id="carTransmission" class="form-input" required>
+                            <option value="Automatic">Automatic / Avtomat</option>
+                            <option value="Manual">Manual / Mexanik</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="carImageUrl">Rasm URL manzili</label>
+                    <input type="text" id="carImageUrl" class="form-input" placeholder="https://images.unsplash.com/...">
+                </div>
+                <div class="form-group">
+                    <label for="carDescription">Tavsif</label>
+                    <textarea id="carDescription" class="form-input" rows="3" placeholder="Avtomobil haqida qisqacha ma'lumot..."></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;"><i class="fa-solid fa-floppy-disk"></i> Avtomobilni Saqlash</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JS Logic -->
+    <script>
+        const API_URL = '/api';
+        let stats = {};
+        let cars = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchStats();
+            fetchInventory();
+        });
+
+        // Views Switching
+        function switchView(viewId, menuItemId) {
+            document.querySelectorAll('.dashboard-view').forEach(view => view.classList.remove('active'));
+            document.querySelectorAll('.sidebar-menu li').forEach(item => item.classList.remove('active'));
+            
+            document.getElementById(viewId).classList.add('active');
+            document.getElementById(menuItemId).classList.add('active');
+
+            // Update title
+            const headers = {
+                'statsView': ['Boshqaruv va Statistika', 'Avtosalon faoliyatining umumiy ko\'rsatkichlari'],
+                'inventoryView': ['Mashina Inventari', 'Avtosalondagi sotuvda mavjud barcha mashinalar ro\'yxati'],
+                'ordersView': ['Sotuv va Shartnomalar Logi', 'Sotilgan avtomobillar, naqd va kredit hujjatlari'],
+                'bookingsView': ['Test Drive Bron Jadvali', 'Haydab ko\'rish uchun mijozlar tomonidan yuborilgan bandlar']
+            };
+
+            document.getElementById('viewHeaderTitle').innerText = headers[viewId][0];
+            document.getElementById('viewHeaderSubtitle').innerText = headers[viewId][1];
+
+            // Re-fetch data on active views
+            if (viewId === 'statsView') fetchStats();
+            if (viewId === 'inventoryView') fetchInventory();
+            if (viewId === 'ordersView') fetchAllOrders();
+            if (viewId === 'bookingsView') fetchAllBookings();
+        }
+
+        // Fetch Dashboard Stats
+        async function fetchStats() {
+            try {
+                const res = await fetch(`${API_URL}/dashboard/stats/`);
+                stats = await res.json();
+                
+                // Update widgets
+                document.getElementById('statSalesRevenue').innerText = `$${Number(stats.total_sales_revenue).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                document.getElementById('statOrdersCount').innerText = stats.orders_count;
+                document.getElementById('statCreditCount').innerText = stats.credit_orders_count;
+                document.getElementById('statBookingsCount').innerText = stats.bookings_count;
+
+                // Update recent orders table
+                const ordersBody = document.getElementById('recentOrdersBody');
+                ordersBody.innerHTML = '';
+                if (stats.recent_orders.length === 0) {
+                    ordersBody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);">Sotuvlar mavjud emas</td></tr>';
+                } else {
+                    stats.recent_orders.forEach(order => {
+                        const dateStr = new Date(order.created_at).toLocaleDateString('uz-UZ');
+                        const carNames = order.items.map(item => item.car_details ? `${item.car_details.brand} ${item.car_details.model}` : 'Noma\'lum avto').join(', ');
+                        
+                        const badgeType = order.payment_type === 'Credit' ? 'badge-credit' : 'badge-cash';
+                        const paymentText = order.payment_type === 'Credit' ? 'Kredit' : 'Naqd';
+                        
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td><strong>${order.client_name}</strong></td>
+                            <td>${carNames}</td>
+                            <td><span class="badge ${badgeType}">${paymentText}</span></td>
+                            <td>${order.credit_months || '-'}</td>
+                            <td><strong>$${Number(order.total_price).toLocaleString()}</strong></td>
+                            <td>${dateStr}</td>
+                        `;
+                        ordersBody.appendChild(row);
+                    });
+                }
+
+                // Update recent bookings table
+                const bookingsBody = document.getElementById('recentBookingsBody');
+                bookingsBody.innerHTML = '';
+                if (stats.recent_bookings.length === 0) {
+                    bookingsBody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);">Bronlar mavjud emas</td></tr>';
+                } else {
+                    stats.recent_bookings.forEach(booking => {
+                        const dateStr = new Date(booking.booking_date).toLocaleDateString('uz-UZ');
+                        const statusBadge = `badge-${booking.status.toLowerCase()}`;
+                        
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td><strong>${booking.client_name}</strong></td>
+                            <td>${booking.car_details ? `${booking.car_details.brand} ${booking.car_details.model}` : 'Mashina o\'chirilgan'}</td>
+                            <td>${dateStr}</td>
+                            <td>${booking.start_time.substring(0,5)} - ${booking.end_time.substring(0,5)}</td>
+                            <td><span class="badge ${statusBadge}">${booking.status}</span></td>
+                        `;
+                        bookingsBody.appendChild(row);
+                    });
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // Inventory Management
+        async function fetchInventory() {
+            try {
+                const res = await fetch(`${API_URL}/cars/`);
+                cars = await res.json();
+                
+                const grid = document.getElementById('inventoryGrid');
+                grid.innerHTML = '';
+                
+                cars.forEach(car => {
+                    const defaultImg = "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=400";
+                    const carImg = car.image_url || defaultImg;
+                    
+                    const card = document.createElement('div');
+                    card.className = 'inv-card glass';
+                    card.innerHTML = `
+                        <div class="inv-card-img">
+                            <img src="${carImg}" alt="${car.brand} ${car.model}">
+                        </div>
+                        <div class="inv-card-body">
+                            <div class="inv-card-title">${car.brand} ${car.model} (${car.year})</div>
+                            <div class="inv-card-price">$${Number(car.price).toLocaleString()}</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">
+                                <span>${car.color} | ${car.transmission} | ${car.engine} | ${Number(car.mileage).toLocaleString()} km</span>
+                            </div>
+                            <div class="inv-actions">
+                                <button class="btn btn-secondary btn-sm" onclick="editCar(${car.id})"><i class="fa-solid fa-pen"></i> Tahrirlash</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteCar(${car.id})"><i class="fa-solid fa-trash"></i> O'chirish</button>
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // Orders List
+        async function fetchAllOrders() {
+            try {
+                const res = await fetch(`${API_URL}/orders/`);
+                const orders = await res.json();
+                
+                const tbody = document.getElementById('allOrdersBody');
+                tbody.innerHTML = '';
+                
+                if (orders.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-muted);">Sotuv loglari topilmadi</td></tr>';
+                    return;
+                }
+                
+                orders.forEach(order => {
+                    const dateStr = new Date(order.created_at).toLocaleString('uz-UZ');
+                    const carNames = order.items.map(item => item.car_details ? `${item.car_details.brand} ${item.car_details.model}` : 'Noma\'lum avto').join(', ');
+                    
+                    const badgeType = order.payment_type === 'Credit' ? 'badge-credit' : 'badge-cash';
+                    const paymentText = order.payment_type === 'Credit' ? 'Kredit' : 'Naqd';
+                    
+                    const interest = order.interest_rate ? `${Number(order.interest_rate)}%` : '-';
+                    const monthly = order.monthly_payment ? `$${Number(order.monthly_payment).toLocaleString(undefined, {maximumFractionDigits: 2})}` : '-';
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><strong>#${order.id}</strong></td>
+                        <td><strong>${order.client_name}</strong></td>
+                        <td><div style="font-size:0.8rem;">${order.client_phone}</div><div style="font-size:0.75rem;color:var(--text-muted);">${order.client_email}</div></td>
+                        <td><span class="badge ${badgeType}">${paymentText}</span></td>
+                        <td>${order.credit_months ? `${order.credit_months} oy (${interest})` : '-'}</td>
+                        <td><strong>$${Number(order.total_price).toLocaleString()}</strong></td>
+                        <td><strong style="color:var(--primary);">${monthly}</strong></td>
+                        <td style="font-size:0.8rem;">${dateStr}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // Bookings List
+        async function fetchAllBookings() {
+            try {
+                const res = await fetch(`${API_URL}/bookings/`);
+                const bookings = await res.json();
+                
+                const tbody = document.getElementById('allBookingsBody');
+                tbody.innerHTML = '';
+                
+                if (bookings.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-muted);">Test drive bronlari topilmadi</td></tr>';
+                    return;
+                }
+                
+                bookings.forEach(booking => {
+                    const dateStr = new Date(booking.booking_date).toLocaleDateString('uz-UZ');
+                    const statusBadge = `badge-${booking.status.toLowerCase()}`;
+                    
+                    // Action buttons based on status
+                    let actionButtonsHtml = '';
+                    if (booking.status === 'Pending') {
+                        actionButtonsHtml = `
+                            <button class="btn btn-success btn-sm" onclick="updateBookingStatus(${booking.id}, 'Approved')"><i class="fa-solid fa-check"></i> Tasdiqlash</button>
+                            <button class="btn btn-danger btn-sm" onclick="updateBookingStatus(${booking.id}, 'Cancelled')"><i class="fa-solid fa-ban"></i> Rad etish</button>
+                        `;
+                    } else if (booking.status === 'Approved') {
+                        actionButtonsHtml = `
+                            <button class="btn btn-primary btn-sm" onclick="updateBookingStatus(${booking.id}, 'Completed')"><i class="fa-solid fa-circle-check"></i> Yakunlash</button>
+                            <button class="btn btn-danger btn-sm" onclick="updateBookingStatus(${booking.id}, 'Cancelled')"><i class="fa-solid fa-ban"></i> Bekor qilish</button>
+                        `;
+                    } else {
+                        actionButtonsHtml = `<span style="font-size:0.8rem;color:var(--text-muted);">Yopilgan</span>`;
+                    }
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><strong>#${booking.id}</strong></td>
+                        <td><strong>${booking.client_name}</strong></td>
+                        <td><div style="font-size:0.8rem;">${booking.client_phone}</div><div style="font-size:0.75rem;color:var(--text-muted);">${booking.client_email}</div></td>
+                        <td>${booking.car_details ? `<strong>${booking.car_details.brand} ${booking.car_details.model}</strong>` : 'Mashina o\'chirilgan'}</td>
+                        <td>${dateStr}</td>
+                        <td>${booking.start_time.substring(0,5)} - ${booking.end_time.substring(0,5)}</td>
+                        <td><span class="badge ${statusBadge}">${booking.status}</span></td>
+                        <td>
+                            <div style="display:flex;gap:0.4rem;">
+                                ${actionButtonsHtml}
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function updateBookingStatus(id, newStatus) {
+            try {
+                const res = await fetch(`${API_URL}/bookings/${id}/`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status: newStatus })
+                });
+                
+                if (res.ok) {
+                    await fetchAllBookings();
+                } else {
+                    alert("Statusni yangilashda xatolik yuz berdi.");
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // Modal Controls
+        function openAddCarModal() {
+            document.getElementById('carModalTitle').innerText = "Yangi Avtomobil Qo'shish";
+            document.getElementById('carIdInput').value = '';
+            document.getElementById('carForm').reset();
+            document.getElementById('carModal').classList.add('active');
+        }
+
+        function closeCarModal() {
+            document.getElementById('carModal').classList.remove('active');
+        }
+
+        async function editCar(id) {
+            try {
+                const res = await fetch(`${API_URL}/cars/${id}/`);
+                const car = await res.json();
+                
+                document.getElementById('carModalTitle').innerText = "Avtomobilni Tahrirlash";
+                document.getElementById('carIdInput').value = car.id;
+                document.getElementById('carBrand').value = car.brand;
+                document.getElementById('carModel').value = car.model;
+                document.getElementById('carYear').value = car.year;
+                document.getElementById('carPrice').value = Math.round(car.price);
+                document.getElementById('carColor').value = car.color;
+                document.getElementById('carMileage').value = car.mileage;
+                document.getElementById('carEngine').value = car.engine;
+                document.getElementById('carTransmission').value = car.transmission;
+                document.getElementById('carImageUrl').value = car.image_url;
+                document.getElementById('carDescription').value = car.description;
+                
+                document.getElementById('carModal').classList.add('active');
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function deleteCar(id) {
+            if (!confirm("Haqiqatan ham ushbu avtomobilni o'chirib tashlamoqchimisiz?")) return;
+            
+            try {
+                const res = await fetch(`${API_URL}/cars/${id}/`, {
+                    method: 'DELETE'
+                });
+                
+                if (res.status === 204) {
+                    await fetchInventory();
+                    await fetchStats();
+                } else {
+                    alert("O'chirishda xatolik yuz berdi.");
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function submitCarForm(e) {
+            e.preventDefault();
+            
+            const carId = document.getElementById('carIdInput').value;
+            const payload = {
+                brand: document.getElementById('carBrand').value,
+                model: document.getElementById('carModel').value,
+                year: parseInt(document.getElementById('carYear').value),
+                price: parseFloat(document.getElementById('carPrice').value),
+                color: document.getElementById('carColor').value,
+                mileage: parseInt(document.getElementById('carMileage').value),
+                engine: document.getElementById('carEngine').value,
+                transmission: document.getElementById('carTransmission').value,
+                image_url: document.getElementById('carImageUrl').value,
+                description: document.getElementById('carDescription').value
+            };
+            
+            const url = carId ? `${API_URL}/cars/${carId}/` : `${API_URL}/cars/`;
+            const method = carId ? 'PUT' : 'POST';
+            
+            try {
+                const res = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (res.ok) {
+                    closeCarModal();
+                    await fetchInventory();
+                    await fetchStats();
+                } else {
+                    const data = await res.json();
+                    alert("Avtomobilni saqlashda xatolik: " + JSON.stringify(data));
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    </script>
+</body>
+</html>
+
