@@ -83,4 +83,4 @@ class CartAPITest(TestCase):
         self.assertEqual(response.data['discount'], 5000.00)
         self.assertEqual(response.data['total_price'], 40000.00)
 
-class CheckoutAPITest(TestCase):
+
